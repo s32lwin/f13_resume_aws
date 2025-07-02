@@ -131,7 +131,7 @@ const App: React.FC = () => {
 
   // 2. Save to AWS via Lambda
   try {
-    const response = await fetch('https://4fhn7qpda32q265a2lv6vcx5oi0kkfav.lambda-url.eu-north-1.on.aws/', {
+    const response = await fetch('https://3m5d3mmvnav5socucohi2xaf7a0twspi.lambda-url.us-east-1.on.aws/', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
