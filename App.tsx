@@ -120,16 +120,94 @@ const App: React.FC = () => {
   }, [resumes]);
 function convertResumeToHtml(resume: Resume): string {
   return `
-    <html>
-      <head><title>${resume.title}</title></head>
+    <!DOCTYPE html>
+    <html lang="en">
+      <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta http-equiv="x-pdfkit-font-embedding" content="none" />
+        <title>${resume.title}</title>
+        <style>
+          body {
+            font-family: sans-serif;
+            margin: 0;
+            padding: 40px;
+            background: white;
+            color: #333;
+            line-height: 1.6;
+            font-size: 14px;
+          }
+          h1, h2 {
+            color: #2c3e50;
+            margin-bottom: 12px;
+          }
+          section {
+            margin-bottom: 24px;
+          }
+          .label {
+            font-weight: bold;
+          }
+          ul {
+            padding-left: 20px;
+          }
+        </style>
+      </head>
       <body>
         <h1>${resume.title}</h1>
-        <p>Resume ID: ${resume.id}</p>
-        <!-- Add more fields from resume here -->
+
+        <section>
+          <h2>Personal Info</h2>
+          <p><span class="label">Name:</span> ${resume.contact?.name || 'N/A'}</p>
+          <p><span class="label">Email:</span> ${resume.contact?.email || 'N/A'}</p>
+          <p><span class="label">Phone:</span> ${resume.contact?.phone || 'N/A'}</p>
+          <p><span class="label">LinkedIn:</span> ${resume.contact?.linkedin || 'N/A'}</p>
+          <p><span class="label">Website:</span> ${resume.contact?.website || 'N/A'}</p>
+          <p><span class="label">Address:</span> ${resume.contact?.address || 'N/A'}</p>
+        </section>
+
+        <section>
+          <h2>Summary</h2>
+          <p>${resume.summary || 'No summary provided.'}</p>
+        </section>
+
+        <section>
+          <h2>Skills</h2>
+          <ul>
+            ${(resume.skills || []).map(skill => `<li>${skill}</li>`).join('')}
+          </ul>
+        </section>
+
+        <section>
+          <h2>Experience</h2>
+          ${(resume.experience || []).map(exp => `
+            <div>
+              <p><span class="label">Company:</span> ${exp.company}</p>
+              <p><span class="label">Company:</span> ${exp.company}</p>
+              <p>{experience.jobTitle}</p>
+              <p><span class="label">From:</span> ${exp.startDate} - ${exp.endDate}</p>
+              <p>${exp.description}</p>
+            </div>
+            <br />
+          `).join('')}
+        </section>
+
+        <section>
+          <h2>Education</h2>
+          ${(resume.education || []).map(edu => `
+            <div>
+              <p><span class="label">School:</span> ${edu.school}</p>
+              <p><span class="label">Degree:</span> ${edu.degree}</p>
+            <p>{education.startDate} - {education.endDate}</p>>
+            </div>
+            <br />
+          `).join('')}
+        </section>
       </body>
     </html>
   `;
 }
+
+
 
 const saveResume = useCallback(async (updatedResume: Resume) => {
   // 1. Update local state
