@@ -155,53 +155,35 @@ function convertResumeToHtml(resume: Resume): string {
       <body>
         <h1>${resume.title}</h1>
 
-        <section>
-          <h2>Personal Info</h2>
-          <p><span class="label">Name:</span> ${resume.contact?.name || 'N/A'}</p>
-          <p><span class="label">Email:</span> ${resume.contact?.email || 'N/A'}</p>
-          <p><span class="label">Phone:</span> ${resume.contact?.phone || 'N/A'}</p>
-          <p><span class="label">LinkedIn:</span> ${resume.contact?.linkedin || 'N/A'}</p>
-          <p><span class="label">Website:</span> ${resume.contact?.website || 'N/A'}</p>
-          <p><span class="label">Address:</span> ${resume.contact?.address || 'N/A'}</p>
-        </section>
+       <section>
+  <h2>Experience</h2>
+  ${(resume.experience || []).map(exp => `
+    <div>
+      <p><span class="label">Job Title:</span> ${exp.jobTitle}</p>
+      <p><span class="label">Company:</span> ${exp.company}</p>
+      <p><span class="label">Location:</span> ${exp.location}</p>
+      <p><span class="label">From:</span> ${exp.startDate} - ${exp.endDate}</p>
+      <p>${exp.description}</p>
+    </div>
+    <br />
+  `).join('')}
+</section>
 
-        <section>
-          <h2>Summary</h2>
-          <p>${resume.summary || 'No summary provided.'}</p>
-        </section>
+<section>
+  <h2>Education</h2>
+  ${(resume.education || []).map(edu => `
+    <div>
+      <p><span class="label">School:</span> ${edu.school}</p>
+      <p><span class="label">Degree:</span> ${edu.degree}</p>
+      <p><span class="label">Location:</span> ${edu.location}</p>
+      <p><span class="label">From:</span> ${edu.startDate} - ${edu.endDate}</p>
+    </div>
+    <br />
+  `).join('')}
+</section>
 
-        <section>
-          <h2>Skills</h2>
-          <ul>
-            ${(resume.skills || []).map(skill => `<li>${skill}</li>`).join('')}
-          </ul>
-        </section>
 
-        <section>
-          <h2>Experience</h2>
-          ${(resume.experience || []).map(exp => `
-            <div>
-              <p><span class="label">Company:</span> ${exp.company}</p>
-              <p><span class="label">Company:</span> ${exp.company}</p>
-              <p>{experience.jobTitle}</p>
-              <p><span class="label">From:</span> ${exp.startDate} - ${exp.endDate}</p>
-              <p>${exp.description}</p>
-            </div>
-            <br />
-          `).join('')}
-        </section>
-
-        <section>
-          <h2>Education</h2>
-          ${(resume.education || []).map(edu => `
-            <div>
-              <p><span class="label">School:</span> ${edu.school}</p>
-              <p><span class="label">Degree:</span> ${edu.degree}</p>
-            <p>{education.startDate} - {education.endDate}</p>>
-            </div>
-            <br />
-          `).join('')}
-        </section>
+       
       </body>
     </html>
   `;

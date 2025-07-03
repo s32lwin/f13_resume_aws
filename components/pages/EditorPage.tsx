@@ -27,22 +27,34 @@ const EditorPage: React.FC<EditorPageProps> = ({ initialResume, onSave, onBack }
     }, 500);
   };
   
-  const handleDownloadPdf = () => {
-    const { jsPDF } = window.jspdf;
-    const previewElement = document.getElementById('resume-preview');
-    if (previewElement) {
-        window.html2canvas(previewElement, { scale: 3 }).then(canvas => {
-            const imgData = canvas.toDataURL('image/png');
-            const pdf = new jsPDF({
-                orientation: 'portrait',
-                unit: 'px',
-                format: [canvas.width, canvas.height]
-            });
-            pdf.addImage(imgData, 'PNG', 0, 0, canvas.width, canvas.height);
-            pdf.save(`${resume.title.replace(/\s/g, '_')}.pdf`);
-        });
-    }
-  };
+  const handleDownloadPdf = async () => {
+  const { jsPDF } = window.jspdf;
+  const previewElement = document.getElementById('resume-preview');
+  if (!previewElement) return;
+
+  const canvas = await window.html2canvas(previewElement, {
+    scale: 0.8,           // Reduce resolution (was 3)
+    useCORS: true,        // Enables CORS for external assets
+    allowTaint: true,     // Allow cross-origin images
+    logging: false
+  });
+
+  const imgData = canvas.toDataURL('image/jpeg', 0.4); // Use JPEG + compression
+
+  const pdf = new jsPDF({
+    orientation: 'portrait',
+    unit: 'pt',
+    format: 'a4',
+    compress: true
+  });
+
+  const pdfWidth = pdf.internal.pageSize.getWidth();
+  const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+
+  pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, pdfHeight);
+  pdf.save(`${resume.title.replace(/\s/g, '_')}.pdf`);
+};
+
 
   return (
     <div className="bg-slate-100">
