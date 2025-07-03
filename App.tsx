@@ -118,8 +118,20 @@ const App: React.FC = () => {
           setCurrentPage(Page.Editor);
       }
   }, [resumes]);
+function convertResumeToHtml(resume: Resume): string {
+  return `
+    <html>
+      <head><title>${resume.title}</title></head>
+      <body>
+        <h1>${resume.title}</h1>
+        <p>Resume ID: ${resume.id}</p>
+        <!-- Add more fields from resume here -->
+      </body>
+    </html>
+  `;
+}
 
- const saveResume = useCallback(async (updatedResume: Resume) => {
+const saveResume = useCallback(async (updatedResume: Resume) => {
   // 1. Update local state
   setResumes(prevResumes => {
     const exists = prevResumes.some(r => r.id === updatedResume.id);
@@ -129,15 +141,18 @@ const App: React.FC = () => {
     return [...prevResumes, updatedResume];
   });
 
+  // Generate HTML from resume data
+  const htmlContent = convertResumeToHtml(updatedResume);
+
   // 2. Save to AWS via Lambda
   try {
     const response = await fetch('https://3m5d3mmvnav5socucohi2xaf7a0twspi.lambda-url.us-east-1.on.aws/', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        userId: user?.username || 'unknown-user', // 👈 Dynamic from Cognito
-        ...updatedResume
-      })
+        userId: user?.username || 'unknown-user',
+        html: htmlContent,    // send HTML as required
+      }),
     });
 
     const text = await response.text();
